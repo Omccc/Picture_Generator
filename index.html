@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Set character set and viewport for better rendering on different devices -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image Generator</title>
+
+  <!-- Styling for the page -->
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -81,39 +84,52 @@
   </style>
 </head>
 <body>
+  <!-- Page content -->
   <h1>Image Generator</h1>
   <div id="image-container">
     <div id="overlay">
+      <!-- Previous button with an onclick event -->
       <button class="arrow-button" onclick="prevImage()">◀ Previous</button>
       <div>
+        <!-- Input for entering a keyword -->
         <label for="keyword-input">Enter a keyword:</label>
         <input type="text" id="keyword-input" placeholder="e.g., nature">
+        <!-- Generate Image button with an onclick event -->
         <button id="generate-button" onclick="generateImage()">Generate Image</button>
       </div>
+      <!-- Next button with an onclick event -->
       <button class="arrow-button" onclick="nextImage()">Next ▶</button>
     </div>
+    <!-- Container for displaying the generated image -->
     <div id="image-display"></div>
   </div>
 
+  <!-- JavaScript script for dynamic functionality -->
   <script>
+    // API access key for Unsplash
     const accessKey = 'VEDJ1PKclWtMrIbAjbZTini7nDORKW91WfDo1oD6Bok';
     const imageContainer = document.getElementById('image-display');
     let currentIndex = 0;
     let images = [];
 
+    // Function to fetch and display images based on a keyword
     function generateImage() {
       const keyword = document.getElementById('keyword-input').value.trim();
 
+      // Check if a keyword is provided
       if (!keyword) {
         alert('Please enter a keyword.');
         return;
       }
 
+      // API URL for fetching random images based on the keyword
       const apiUrl = `https://api.unsplash.com/photos/random?query=${encodeURIComponent(keyword)}&client_id=${accessKey}&count=5`;
 
+      // Fetch images from the Unsplash API
       fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
+          // Check if images are returned
           if (data.length > 0) {
             images = data;
             currentIndex = 0;
@@ -128,22 +144,25 @@
         });
     }
 
+    // Function to display an image with a fade-in effect
     function displayImage(imageUrl) {
       const imageElement = document.createElement('img');
       imageElement.src = imageUrl;
       imageElement.alt = 'Generated Image';
 
-      // Appliquer une animation pour améliorer la transition entre les images
+      // Apply a fade-in animation for a smoother transition between images
       imageElement.style.opacity = 0;
 
       imageElement.onload = () => {
         imageElement.style.opacity = 1;
       };
 
+      // Clear the container and append the new image
       imageContainer.innerHTML = '';
       imageContainer.appendChild(imageElement);
     }
 
+    // Function to navigate to the previous image
     function prevImage() {
       if (currentIndex > 0) {
         currentIndex--;
@@ -151,6 +170,7 @@
       }
     }
 
+    // Function to navigate to the next image
     function nextImage() {
       if (currentIndex < images.length - 1) {
         currentIndex++;
@@ -158,11 +178,12 @@
       }
     }
 
+    // Function to fade out the current image and change to the next one
     function fadeOutAndChangeImage() {
       const imageElement = document.querySelector('#image-display img');
       imageElement.style.opacity = 0;
 
-      // Attendre la fin de l'animation de fondu avant de changer l'image
+      // Wait for the end of the fade animation before changing the image
       setTimeout(() => {
         displayImage(images[currentIndex].urls.regular);
       }, 500);
